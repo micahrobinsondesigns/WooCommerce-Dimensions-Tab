@@ -20,14 +20,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	// ONLY RUN IF WOOCOMMERCE IS ACTIVE...
 
 	// Hides the product's weight and dimension in single product page
-
-
-
-
 	add_filter( 'wc_product_enable_dimensions_display', '__return_false' );
 
-
-
+	/* Hides pa_size from Additional Information Tab */
+	add_filter( 'woocommerce_product_get_attributes', 'hide_size', 20, 2 );
+	function hide_size( $attributes, $product ) {
+		$attributes[ 'pa_size' ]->set_visible( false );
+		return $attributes;
+	}
 
 	// Callback Function
 	function woo_dimensions_tab_content( $content ) {
@@ -37,7 +37,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			global $product;
 			$dimensionsContent= '';
 			if ($product->get_type() == 'simple') {
-
 				$dimensionsContent.= '<table class="woocommerce-product-attributes shop_attributes">';
 				if ( $product->has_weight() ) {
 					$dimensionsContent.= '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--weight">';
@@ -52,10 +51,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$dimensionsContent.= '</tr>';
 				}
 				$dimensionsContent.= '</table>';
-
-
-			//	$weight.= $product->get_weight() . get_option('woocommerce_weight_unit');
-
 			} else if ($product->get_type() == 'variable') {
 				$variations = $product->get_available_variations();
 				$foundSizes= array();
@@ -105,5 +100,4 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			return $tabs;
 		}
 	}
-
 }
