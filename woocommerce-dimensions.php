@@ -1,7 +1,7 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:       woocommerce Dimensions Tab
+ * Plugin Name:       WooCommerce Dimensions Tab
  * Description:       Display dimensions of variations below description tab.
  * Version:           1.0
  * Author:            Micah Robinson
@@ -20,7 +20,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	// ONLY RUN IF WOOCOMMERCE IS ACTIVE...
 
 	// Hides the product's weight and dimension in single product page
+
+
+
+
 	add_filter( 'wc_product_enable_dimensions_display', '__return_false' );
+
+
+
 
 	// Callback Function
 	function woo_dimensions_tab_content( $content ) {
@@ -30,10 +37,25 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			global $product;
 			$dimensionsContent= '';
 			if ($product->get_type() == 'simple') {
-				$dimensions = $product->get_dimensions();
-				if ( ! empty( $dimensions ) ) {
-					$returnContent.= '<div class="dimensions">'.$dimensions.'</div>';
+
+				$dimensionsContent.= '<table class="woocommerce-product-attributes shop_attributes">';
+				if ( $product->has_weight() ) {
+					$dimensionsContent.= '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--weight">';
+					$dimensionsContent.= '<th class="woocommerce-product-attributes-item__label">Weight</th>';
+					$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'. wp_kses_post( wc_format_weight( $product->get_weight() ) ) .'</td>';
+					$dimensionsContent.= '</tr>';
 				}
+				if ( $product->has_dimensions() ) {
+					$dimensionsContent.= '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--dimensions">';
+					$dimensionsContent.= '<th class="woocommerce-product-attributes-item__label">Dimensions</th>';
+					$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'. wp_kses_post( wc_format_dimensions( $product->get_dimensions( false ) ) ) .'</td>';
+					$dimensionsContent.= '</tr>';
+				}
+				$dimensionsContent.= '</table>';
+
+
+			//	$weight.= $product->get_weight() . get_option('woocommerce_weight_unit');
+
 			} else if ($product->get_type() == 'variable') {
 				$variations = $product->get_available_variations();
 				$foundSizes= array();
@@ -42,25 +64,24 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					if ( $value['dimensions_html'] !== 'N/A') {
 						if (!in_array($value['attributes']['attribute_pa_size'], $foundSizes)) {
 							$foundSizes[]= $value['attributes']['attribute_pa_size'];
-
 							$taxonomy = 'pa_size';
 							$meta = get_post_meta($value['variation_id'], 'attribute_'.$taxonomy, true);
 							$term = get_term_by('slug', $meta, $taxonomy);
-
 							$currentTermName= $term->name;
-							if ($currentTermName == '') {
-								$dimensionsContent.= '<tr><td>'.$value['dimensions_html'].'</td></tr>';
-							} else {
-								$dimensionsContent.= '<tr><th>'.$currentTermName.'</th>';
-								$dimensionsContent.= '<td>'.$value['dimensions_html'].'</td></tr>';
+							if ($currentTermName !== '') {
+								$dimensionsContent.= '<tr><th rowspan="3" class="variation_name">'.$currentTermName.'</th></tr>';
 							}
-							}
+							$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Dimensions</td>';
+							$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['dimensions_html'].'</td></tr>';
+							$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Weight</td>';
+							$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['weight_html'].'</td></tr>';
+						}
 					}
 				}
 				$dimensionsContent.= '</table>';
 			}
 			if ($dimensionsContent !== '') {
-				$returnContent.=$dimensionsContent;
+				$returnContent.='<h2>Dimensions</h2>'.$dimensionsContent;
 			}
 		}
 		echo $returnContent;
@@ -78,7 +99,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			'callback' 	=> 'woo_dimensions_tab_content'
 		);
 		global $product;
-		if ( !$product->has_dimensions() ) {
+		if ( !$product->has_dimensions() && !$product->has_weight() ) {
 			unset( $tabs['dimensions_tab'] );
 		} else {
 			return $tabs;
