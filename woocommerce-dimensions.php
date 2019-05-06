@@ -22,13 +22,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	// Hides the product's weight and dimension in single product page
 	add_filter( 'wc_product_enable_dimensions_display', '__return_false' );
 
-	/* Hides pa_size from Additional Information Tab */
-	add_filter( 'woocommerce_product_get_attributes', 'hide_size', 20, 2 );
-	function hide_size( $attributes, $product ) {
-		$attributes[ 'pa_size' ]->set_visible( false );
-		return $attributes;
-	}
-
 	// Callback Function
 	function woo_dimensions_tab_content( $content ) {
 		$returnContent='';
@@ -76,28 +69,39 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$dimensionsContent.= '</table>';
 			}
 			if ($dimensionsContent !== '') {
-				$returnContent.='<h2>Dimensions</h2>'.$dimensionsContent;
+				$returnContent.=$dimensionsContent;
 			}
 		}
+		wc_get_template( 'single-product/tabs/additional-information.php' );
 		echo $returnContent;
 	}
 
-	/* Create Dimensions Tab */
+	/* Create Dimensions Tab If Additional Information Tab Does Not Exist */
 
-	add_filter( 'woocommerce_product_tabs', 'woo_dimensions_product_tab', 0 );
+	add_filter( 'woocommerce_product_tabs', 'woo_dimensions_product_tab', 98 );
 	function woo_dimensions_product_tab( $tabs ) {
-
-		// Adds the new tab
-		$tabs['dimensions_tab'] = array(
-			'title' 	=> __( 'Dimensions', 'woocommerce' ),
-			'priority' 	=> 30,
-			'callback' 	=> 'woo_dimensions_tab_content'
-		);
 		global $product;
-		if ( !$product->has_dimensions() && !$product->has_weight() ) {
-			unset( $tabs['dimensions_tab'] );
-		} else {
+		$attributes = array_filter( $product->get_attributes(), 'wc_attributes_array_filter_visible' );
+		if ( $attributes ) {
+			$tabs['additional_information']['callback'] = 'woo_dimensions_tab_content';	// Custom additional_information callback
 			return $tabs;
+		} else {
+			add_filter ( 'woocommerce_product_additional_information_heading', 'custom_product_additional_information_heading' ) ;
+				function custom_product_additional_information_heading() {
+					return 'Dimensions'; // Change Title
+				}
+			// Adds the new tab
+			$tabs['dimensions_tab'] = array(
+				'title' 	=> __( 'Dimensions', 'woocommerce' ),
+				'priority' 	=> 20,
+				'callback' 	=> 'woo_dimensions_tab_content'
+			);
+			global $product;
+			if ( !$product->has_dimensions() && !$product->has_weight() ) {
+				unset( $tabs['dimensions_tab'] );
+			} else {
+				return $tabs;
+			}
 		}
 	}
 }
