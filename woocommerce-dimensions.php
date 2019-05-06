@@ -49,7 +49,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$foundSizes= array();
 				$dimensionsContent.= '<table class="shop_dimensions">';
 				foreach ( $variations as $key => $value ) {
-					if ( $value['dimensions_html'] !== 'N/A') {
+					if ( $value['dimensions_html'] !== 'N/A' || $value['weight_html'] !== 'N/A') {
 						if (!in_array($value['attributes']['attribute_pa_size'], $foundSizes)) {
 							$foundSizes[]= $value['attributes']['attribute_pa_size'];
 							$taxonomy = 'pa_size';
@@ -57,12 +57,20 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							$term = get_term_by('slug', $meta, $taxonomy);
 							$currentTermName= $term->name;
 							if ($currentTermName !== '') {
-								$dimensionsContent.= '<tr><th rowspan="3" class="variation_name">'.$currentTermName.'</th></tr>';
+								if( $value['dimensions_html'] !== 'N/A' && $value['weight_html'] !== 'N/A' ) {
+									$dimensionsContent.= '<tr><th rowspan="3" class="variation_name">'.$currentTermName.'</th></tr>';
+								} else {
+									$dimensionsContent.= '<tr><th rowspan="2" class="variation_name">'.$currentTermName.'</th></tr>';
+								}
 							}
-							$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Dimensions</td>';
-							$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['dimensions_html'].'</td></tr>';
-							$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Weight</td>';
-							$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['weight_html'].'</td></tr>';
+							if ( $value['dimensions_html'] !== 'N/A') {
+								$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Dimensions</td>';
+								$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['dimensions_html'].'</td></tr>';
+							}
+							if ( $value['weight_html'] !== 'N/A') {
+								$dimensionsContent.= '<tr><td class="woocommerce-product-attributes-item__label">Weight</td>';
+								$dimensionsContent.= '<td class="woocommerce-product-attributes-item__value">'.$value['weight_html'].'</td></tr>';
+							}
 						}
 					}
 				}
