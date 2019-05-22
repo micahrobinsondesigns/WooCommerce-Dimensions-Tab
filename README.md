@@ -9,4 +9,4 @@ If there are no attributes with "Visible on the product page" checked then a new
 
 ![Dimensions-Tab](https://user-images.githubusercontent.com/6086346/57200654-5ae59c80-6f43-11e9-87b8-d4ab70833547.PNG)
 
-NOTE: Each product variation must have a price to have the dimensions appear.
+*NOTE: Each product variation must have a price to have the dimensions appear.*
