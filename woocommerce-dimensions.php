@@ -2,13 +2,13 @@
 
 /**
  * @wordpress-plugin
- * Plugin Name:       Woocommerce Category Disclaimer
- * Description:       Add disclaimer field to Add/Edit Category page in wp-admin
+ * Plugin Name:       WooCommerce Dimensions Tab
+ * Description:       Display dimensions of variations below description tab.
  * Version:           1.0
  * Author:            Micah Robinson
  * License:           GPL-2.0
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       woocommerce-category-disclaimer
+ * Text Domain:       woocommerce-dimensions
  WC tested up to: 5.1.1
  */
 
