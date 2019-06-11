@@ -1,20 +1,21 @@
 <?php
+
 /**
  * @wordpress-plugin
- * Plugin Name:       WooCommerce Dimensions Tab
- * Description:       Display dimensions of variations below description tab.
+ * Plugin Name:       Woocommerce Category Disclaimer
+ * Description:       Add disclaimer field to Add/Edit Category page in wp-admin
  * Version:           1.0
  * Author:            Micah Robinson
  * License:           GPL-2.0
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       woocommerce-dimensions
- WC tested up to: 3.6
+ * Text Domain:       woocommerce-category-disclaimer
+ WC tested up to: 5.1.1
  */
 
 /** Die if accessed directly
 */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 	// ONLY RUN IF WOOCOMMERCE IS ACTIVE...
