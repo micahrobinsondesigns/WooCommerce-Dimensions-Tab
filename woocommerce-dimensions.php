@@ -50,7 +50,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$foundSizes= array();
 				$dimensionsContent.= '<table class="shop_dimensions">';
 				foreach ( $variations as $key => $value ) {
-					if ( $value['dimensions_html'] !== 'N/A' || $value['weight_html'] !== 'N/A') {
+					if ( ($value['dimensions_html'] !== 'N/A' || $value['weight_html'] !== 'N/A') && (isset($value['attributes']['attribute_pa_size']) ) ) {
 						if (!in_array($value['attributes']['attribute_pa_size'], $foundSizes)) {
 							$foundSizes[]= $value['attributes']['attribute_pa_size'];
 							$taxonomy = 'pa_size';
