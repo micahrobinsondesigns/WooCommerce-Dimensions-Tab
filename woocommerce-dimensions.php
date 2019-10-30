@@ -56,7 +56,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							$taxonomy = 'pa_size';
 							$meta = get_post_meta($value['variation_id'], 'attribute_'.$taxonomy, true);
 							$term = get_term_by('slug', $meta, $taxonomy);
-							$currentTermName= $term->name;
+							$currentTermName= '';
+							if(isset($term->name)){
+								$currentTermName= $term->name;
+							}
 							if ($currentTermName !== '') {
 								if( $value['dimensions_html'] !== 'N/A' && $value['weight_html'] !== 'N/A' ) {
 									$dimensionsContent.= '<tr><th rowspan="3" class="variation_name">'.$currentTermName.'</th></tr>';
